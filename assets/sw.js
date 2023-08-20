@@ -2,8 +2,8 @@ var cacheName = 'egui-template-pwa';
 var filesToCache = [
   './',
   './index.html',
-  './eframe_template.js',
-  './eframe_template_bg.wasm',
+  './junior_sale_site.js',
+  './junior_sale_site_bg.wasm',
 ];
 
 /* Start the service worker and cache all of the app's content */
@@ -16,10 +16,10 @@ self.addEventListener('install', function (e) {
 });
 
 /* Serve cached content when offline */
-self.addEventListener('fetch', function (e) {
-  e.respondWith(
-    caches.match(e.request).then(function (response) {
-      return response || fetch(e.request);
-    })
-  );
-});
+// self.addEventListener('fetch', function (e) {
+//   e.respondWith(
+//     caches.match(e.request).then(function (response) {
+//       return response || fetch(e.request);
+//     })
+//   );
+// });

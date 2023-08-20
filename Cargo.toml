@@ -1,10 +1,9 @@
 [package]
-name = "eframe_template"
+name = "junior_sale_site"
 version = "0.1.0"
-authors = ["Emil Ernerfeldt <emil.ernerfeldt@gmail.com>"]
+authors = ["José Porcar"]
 edition = "2021"
-rust-version = "1.65"
-
+rust-version = "1.67.0"
 
 [dependencies]
 egui = "0.22.0"
@@ -15,16 +14,20 @@ eframe = { version = "0.22.0", default-features = false, features = [
     "persistence",   # Enable restoring app state when restarting the app.
 ] }
 log = "0.4"
+egui-dropdown = "0.3.0"
 
 # You only need serde if you want app persistence:
 serde = { version = "1", features = ["derive"] }
+rusqlite = { version = "0.29.0", features = ["bundled", "wasm32-wasi-vfs", "chrono"] }
+chrono = "0.4.26"
 
 # native:
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(not(target_arch = "wasm32-wasi"))'.dependencies]
 env_logger = "0.10"
+wasm-bindgen-futures = "0.4"
 
 # web:
-[target.'cfg(target_arch = "wasm32")'.dependencies]
+[target.'cfg(target_arch = "wasm32-wasi")'.dependencies]
 wasm-bindgen-futures = "0.4"
 
 

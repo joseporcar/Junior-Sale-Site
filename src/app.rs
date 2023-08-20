@@ -1,9 +1,15 @@
+use egui::Visuals;
+use egui_dropdown::DropDownBox;
+use egui::Color32;
+
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
 #[derive(serde::Deserialize, serde::Serialize)]
 #[serde(default)] // if we add new fields, give them default values when deserializing old state
 pub struct TemplateApp {
     // Example stuff:
     label: String,
+    student_name: String,
+
 
     // this how you opt-out of serialization of a member
     #[serde(skip)]
@@ -15,6 +21,7 @@ impl Default for TemplateApp {
         Self {
             // Example stuff:
             label: "Hello World!".to_owned(),
+            student_name: "".to_owned(),
             value: 2.7,
         }
     }
@@ -45,36 +52,48 @@ impl eframe::App for TemplateApp {
     /// Called each time the UI needs repainting, which may be many times per second.
     /// Put your widgets into a `SidePanel`, `TopPanel`, `CentralPanel`, `Window` or `Area`.
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        let Self { label, value } = self;
+        let Self { label, value, student_name } = self;
+    
+        let mut style: egui::Style = (*ctx.style()).clone();
+        style.visuals.panel_fill = Color32::from_rgb(79, 142, 107);
+        style.visuals.extreme_bg_color = Color32::from_rgb(20, 30, 20);
+        style.visuals.override_text_color = Some(Color32::from_rgb(102, 255, 102));
+        style.visuals.faint_bg_color = Color32::WHITE;
+        style.override_font_id = Some(egui::FontId { size:15., family:egui::FontFamily::Proportional });
+        ctx.set_style(style);
 
         // Examples of how to create different panels and windows.
         // Pick whichever suits you.
         // Tip: a good default choice is to just keep the `CentralPanel`.
         // For inspiration and more examples, go to https://emilk.github.io/egui
 
-        #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
+        // #[cfg(not(target_arch = "wasm32"))] // no File->Quit on web pages!
+        // egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
+        //     // The top panel is often a good place for a menu bar:
+        //     egui::menu::bar(ui, |ui| {
+        //         ui.menu_button("File", |ui| {
+        //             if ui.button("Quit").clicked() {
+        //                 _frame.close();
+        //             }    
+        //         });
+        //     });
+        // });
+
         egui::TopBottomPanel::top("top_panel").show(ctx, |ui| {
-            // The top panel is often a good place for a menu bar:
-            egui::menu::bar(ui, |ui| {
-                ui.menu_button("File", |ui| {
-                    if ui.button("Quit").clicked() {
-                        _frame.close();
-                    }
-                });
-            });
+            ui.set_height(50.);
         });
 
         egui::SidePanel::left("side_panel").show(ctx, |ui| {
             ui.heading("Side Panel");
 
             ui.horizontal(|ui| {
-                ui.label("Write something: ");
+                ui.label("Wrte something: ");
                 ui.text_edit_singleline(label);
             });
 
             ui.add(egui::Slider::new(value, 0.0..=10.0).text("value"));
             if ui.button("Increment").clicked() {
-                *value += 1.0;
+                *value += 2.0;
             }
 
             ui.with_layout(egui::Layout::bottom_up(egui::Align::LEFT), |ui| {
@@ -102,6 +121,29 @@ impl eframe::App for TemplateApp {
                 "Source code."
             ));
             egui::warn_if_debug_build(ui);
+        });
+
+        egui::SidePanel::right("right_panel").show(ctx, |ui| {
+            ui.set_width(250.);
+            ui.heading("STUDENT NAME:");
+            let alternatives = ["arepa", "galleta", "juan", "maria"].iter();
+            
+            ui.add(DropDownBox::from_iter(
+                alternatives,
+                "STUDENT NAMES",
+                student_name,
+                |ui, text| ui.selectable_label(true, text),  
+            ));
+            ui.add(egui::Separator::default().spacing(200.).shrink(50.));
+
+        });
+
+        egui::TopBottomPanel::bottom("bottom-panel").show(ctx, |ui| {
+            ui.set_height(50.);
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.add(egui::Button::new("add product"))
+            })
+
         });
 
         if false {
